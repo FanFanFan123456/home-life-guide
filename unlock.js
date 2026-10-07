@@ -45,8 +45,10 @@
     function loadMedia(){document.querySelectorAll('[data-vault-path]').forEach(element=>{
       if(element.dataset.loading)return;element.dataset.loading='1';
       if(element.tagName==='VIDEO'){
-        const load=document.createElement('button');load.textContent='加载视频';load.className='button secondary';element.before(load);
-        load.addEventListener('click',async()=>{load.disabled=true;load.textContent='正在加载手机观看版…';try{await loadOne(element,(current,total)=>{load.textContent=`正在加载视频 ${current}/${total}`;});load.remove();}catch{load.disabled=false;load.textContent='重新加载视频';}});
+        const note=document.createElement('p');note.textContent='视频加载中…';note.setAttribute('role','status');element.before(note);
+        const retry=document.createElement('button');retry.textContent='重试加载视频';retry.className='button secondary';retry.hidden=true;element.before(retry);
+        const start=async()=>{retry.hidden=true;retry.disabled=true;note.textContent='视频加载中…';element.preload='metadata';try{await loadOne(element,(current,total)=>{note.textContent=`视频加载中 ${current}/${total}…`;});note.remove();retry.remove();}catch{note.textContent='视频暂时未能加载，请检查网络或点重试。';retry.hidden=false;retry.disabled=false;}};
+        retry.addEventListener('click',start);start();
       }else if(imageObserver)imageObserver.observe(element);else loadImage(element);
     });}
     const observer=new MutationObserver(loadMedia);observer.observe(document.body,{childList:true,subtree:true});
