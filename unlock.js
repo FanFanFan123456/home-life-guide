@@ -46,8 +46,8 @@
       if(element.dataset.loading)return;element.dataset.loading='1';
       if(element.tagName==='VIDEO'){
         const note=document.createElement('p');note.textContent='视频加载中…';note.setAttribute('role','status');element.before(note);
-        const retry=document.createElement('button');retry.textContent='重试加载视频';retry.className='button secondary';retry.hidden=true;element.before(retry);
-        const start=async()=>{retry.hidden=true;retry.disabled=true;note.textContent='视频加载中…';element.preload='metadata';try{await loadOne(element,(current,total)=>{note.textContent=`视频加载中 ${current}/${total}…`;});note.remove();retry.remove();}catch{note.textContent='视频暂时未能加载，请检查网络或点重试。';retry.hidden=false;retry.disabled=false;}};
+        const retry=document.createElement('button');retry.textContent='重试加载视频';retry.className='button secondary';
+        const start=async()=>{retry.remove();retry.disabled=true;note.textContent='视频加载中…';element.preload='metadata';try{await loadOne(element,(current,total)=>{note.textContent=`视频加载中 ${current}/${total}…`;});note.remove();retry.remove();}catch{note.textContent='视频暂时未能加载，请检查网络或点重试。';element.before(retry);retry.disabled=false;}};
         retry.addEventListener('click',start);start();
       }else if(imageObserver)imageObserver.observe(element);else loadImage(element);
     });}
